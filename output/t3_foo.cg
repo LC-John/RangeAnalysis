@@ -1,0 +1,45 @@
+
+Constraint graph foo
+Entry: 9 12 
+Return: 4
+Constraint:
+  VarNode 0
+    Name: k_7	Type: int
+    Next: 8 	Prev: 6 
+  VarNode 1
+    Name: k_1	Type: int
+    Next: 14 15 	Prev: 8 
+  VarNode 2
+    Name: k_1_bb_4_t	Type: int
+    Next: 19 16 	Prev: 14 
+  VarNode 4
+    Name: _8	Type: int
+    Next: 	Prev: 19 
+  ArithmeticNode 6
+    Operation: +
+    Next: 0 	Prev: 7 16 
+  RangeNode 7
+    Range: [1.0, 1.0]
+    Next: 6 	Prev: 
+  PhiNode 8
+    Next: 1 	Prev: 9 0 
+  VarNode 9
+    Name: k_3	Type: int
+    Next: 8 	Prev: 
+  VarNode 12
+    Name: N_5	Type: int
+    Next: 14 15 	Prev: 
+  FtRangeNode 14
+    Range-L: -inf
+    Range-R: N_5 - 1
+    Next: 2 	Prev: 12 1 
+  FtRangeNode 15
+    Range-L: k_1 + 1
+    Range-R: inf
+    Next: 	Prev: 1 12 
+  VarNode 16
+    Name: k_1_59731	Type: int
+    Next: 6 	Prev: 2 
+  VarNode 19
+    Name: k_1_68925	Type: int
+    Next: 4 	Prev: 2 

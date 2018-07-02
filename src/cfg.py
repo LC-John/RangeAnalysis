@@ -14,8 +14,6 @@ PATTERN_VAR = re.compile(r"(([A-Za-z][A-Za-z0-9]*_[A-Za-z0-9]+)|([A-Za-z][A-Za-z
 PATTERN_RAW_VAR = re.compile(r"[A-Za-z_][A-Za-z0-9_.]*")
 PATTERN_FUNC = re.compile(r"([A-Za-z0-9]+( |\t)*\(.*\))")
 
-
-
 class Compare(object):
     
     def __init__(self, line=""):
@@ -129,7 +127,23 @@ class Assign(object):
             tmp = tmp_right.strip().strip(";").strip()
             self.__source.append(tmp)
             if PATTERN_FUNC.match(tmp) is not None:
+                tmp1 = PATTERN_FUNC.match(tmp).group()
+                tmp2 = re.search(r"\(.*\)", tmp).group()
+                tmp2 = tmp2.strip().strip("()").strip().split(",")
+                self.__source = []
+                self.__source.append(tmp1)
                 self.__source_prop.append("func")
+                for tt in tmp2:
+                    self.__source.append(tt.strip())
+                    if PATTERN_VAR.search(tmp) is not None:
+                        self.__source_prop.append("var")
+                    elif PATTERN_FP.search(tmp) is not None:
+                        self.__source_prop.append("fp")
+                    elif PATTERN_INT.search(tmp) is not None:
+                        self.__source_prop.append("int")
+                    else:
+                        assert False, "Invalid token \"" + tmp + "\""
+                self.__op = 'func'
             elif PATTERN_VAR.search(tmp) is not None:
                 self.__source_prop.append("var")
             elif PATTERN_FP.search(tmp) is not None:
@@ -155,6 +169,13 @@ class Assign(object):
             ret += self.__source[0] + " " + self.__op + " " + self.__source[1] + ";"
         elif self.__op == "assign":
             ret += self.__source[0] + ";"
+        elif self.__source_prop[0] == "func":
+            ret += self.__source[0] + "("
+            if len(self.__source) >= 2:
+                ret += self.__source[1]
+                for i in self.__source[2:]:
+                    ret += ", " + i
+            ret += ")"
         return ret
         
     def debug(self):
@@ -170,6 +191,17 @@ class Assign(object):
             print ('    Assignment')
             print ('      Source: ' + self.__source[0] + " (" + self.__source_prop[0] + ")")
             print ('      Target: ' + self.__left)
+        elif self.__source_prop[0] == "func":
+            print ('    Call function:')
+            print ('      Funcation: ' + self.__source[0])
+            if len(self.__source) > 1:
+                print ('      Param:', end="")
+                for i, j in zip(self.__source[1:], self.__source_prop[1:]):
+                    print (i + " (" + j + ")", end=', ')
+                print ()
+            else:
+                print ('      No param')
+            print ('      Target' + self.__left)
         else:
             print ('    Arithmetic expression')
             print ('      Operation: ' + self.__op)
@@ -320,13 +352,13 @@ class Goto(object):
              
 class Branch(object):
     
-    def __init__(self, name="", ft=True):
+    def __init__(self, name="", bb_name="", ft=True):
         
         self.__name = PATTERN_RAW_VAR.match(name.strip()).group()
         self.__pattern = re.compile(self.__name)
-        self.__name_t = self.__name + "_t"
+        self.__name_t = self.__name + bb_name + "_t"
         self.__ft = False
-        self.__name_f = self.__name + "_f"
+        self.__name_f = self.__name + bb_name + "_f"
         if ft:
             self.__ft = True
             self.__name_f = None
@@ -360,6 +392,27 @@ class Branch(object):
     def get_false_name(self):   return self.__name_f
     def get_name_pattern(self): return self.__pattern
    
+class Constrain_Phi(object):
+    
+    def __init__(self, var, con_var):
+        
+        self.__left = PATTERN_RAW_VAR.match(var.strip()).group()
+        self.__right = PATTERN_RAW_VAR.match(con_var.strip()).group()
+        
+    def __str__(self):
+        ret = ""
+        ret += "# " + self.__left + " = C_PHI <" + self.__left + ", " + self.__right + ">"
+        return ret
+        
+    def debug(self):
+        
+        print ("    Constrain-Phi function")
+        print ("      Source: " + self.__left + ", " + self.__right)
+        print ("      Target: " + self.__left)
+        
+    def get_left(self):     return self.__left
+    def get_right(self):    return [self.__left, self.__right]
+
 class Block(object):
     
     def __init__(self, lines=[]):
@@ -399,10 +452,20 @@ class Block(object):
         self.__branch = []
         if self.__goto is not None and self.__goto.is_conditional():
             tmp_ft = (self.__goto.get_goto()['condition'].get_var_number() == 2)
+            tmp_bb_name_ = self.__name.strip().strip('<>').strip().split()
+            tmp_bb_name = ""
+            for i in tmp_bb_name_:
+                tmp_bb_name += "_" + i
             if self.__goto.get_goto()['condition'].get_left_prop() == 'var':
-                self.__branch.append(Branch(self.__goto.get_goto()['condition'].get_left(), tmp_ft))
+                self.__branch.append(Branch(self.__goto.get_goto()['condition'].get_left(), tmp_bb_name, tmp_ft))
             if self.__goto.get_goto()['condition'].get_right_prop() == 'var':
-                self.__branch.append(Branch(self.__goto.get_goto()['condition'].get_right(), tmp_ft))
+                self.__branch.append(Branch(self.__goto.get_goto()['condition'].get_right(), tmp_bb_name, tmp_ft))
+        self.__def = []
+        for a in self.__content:
+            if type(a) is Assign:
+                tmp_raw_var = PATTERN_RAW_VAR.match(a.get_left()).group()
+                if tmp_raw_var not in self.__def:
+                    self.__def.append(tmp_raw_var)
         self.__var = []
         for a in self.__content:
             if type(a) is Return:
@@ -414,7 +477,14 @@ class Block(object):
             if type(a) is Assign:
                 for (s, sp) in zip(a.get_right()['source'], a.get_right()['prop']):
                     if sp == 'var':
-                        tmp_raw_var = PATTERN_RAW_VAR.match(s).group()
+                        if "(int)" in s:
+                            tmp_raw_var = PATTERN_RAW_VAR.match(s[s.find("(int)")+5:].strip()).group()
+                            tmp_raw_var = "(int)"+tmp_raw_var
+                        elif "(float)" in s:
+                            tmp_raw_var = PATTERN_RAW_VAR.match(s[s.find("(float)")+7:].strip()).group()
+                            tmp_raw_var = "(float)"+tmp_raw_var
+                        else:
+                            tmp_raw_var = PATTERN_RAW_VAR.match(s).group()
                         if tmp_raw_var not in self.__var:
                             self.__var.append(tmp_raw_var)
                     elif sp == "func":
@@ -434,70 +504,31 @@ class Block(object):
                             if tmp_raw_var not in self.__var:
                                 self.__var.append(tmp_raw_var)
         for b in self.__branch:
-            if b.get_name() not in self.__var:
-                self.__var.append(b.get_name())
+            tmp_raw_var = PATTERN_RAW_VAR.match(b.get_name().strip())
+            if tmp_raw_var is None:
+                continue
+            if tmp_raw_var.group() not in self.__var:
+                self.__var.append(tmp_raw_var.group())
                 
-    def replace_var(self, old="", new=""):
+    def replace_var(self, old="", new="", chain_head=True):
         
+        old = PATTERN_RAW_VAR.match(old).group()
+        new = PATTERN_RAW_VAR.match(new).group()
         if old not in self.__var:
             return
-        replace = False
-        for c in self.__content:
-            if type(c) is Return:
-                tmp_var = c.get_source()
-                if tmp_var is not None:
-                    tmp_raw_var = PATTERN_RAW_VAR.match(tmp_var).group()
-                    if tmp_raw_var == old:
-                        c.set_source(new)
-            if type(c) is Assign:
-                
-                for (s, sp, sidx) in zip(c.get_right()['source'],
-                                         c.get_right()['prop'],
-                                         range(len(c.get_right()['prop']))):
-                    if sp == 'var':
-                        tmp_raw_var = PATTERN_RAW_VAR.match(s).group()
-                        if tmp_raw_var == old:
-                            c.set_source(new, sp, sidx)
-                    elif sp == 'func':
-                        tmp_func_name = re.match(r"[A-Za-z_][A-Za-z0-9_]*", s.strip()).group()
-                        tmp_var_list = re.search(r"\(.*\)", s).group()
-                        tmp_var_list = tmp_var_list.strip()[1:-1]
-                        if ',' not in tmp_var_list:
-                            tmp_raw_var = PATTERN_RAW_VAR.match(tmp_var_list.strip())
-                            if tmp_raw_var is not None and tmp_raw_var.group() == old:
-                                c.set_source(tmp_func_name+" ("+new+")", sp, sidx)
-                            continue
-                        tmp_var_list = tmp_var_list.split(',')
-                        for tmp_var, tmp_var_idx in zip(tmp_var_list, range(len(tmp_var_list))):
-                            tmp_raw_var = PATTERN_RAW_VAR.match(tmp_var.strip())
-                            if tmp_raw_var is None:
-                                continue
-                            tmp_raw_var = tmp_raw_var.group()
-                            if tmp_raw_var == old:
-                                tmp_var_list[tmp_var_idx] = new
-                                ret = tmp_func_name+' ('+tmp_var_list[0]
-                                for iiii in tmp_var_list[1:]: ret += ", "+iiii
-                                ret += ')'
-                                c.set_source(ret, sp, sidx)
-                                continue
-        
-        if self.__goto is not None \
-            and self.__goto.is_conditional() \
-            and self.__goto.get_goto()['condition'].get_left_prop() == 'var' \
-            and PATTERN_RAW_VAR.match(self.__goto.get_goto()['condition'].get_left()).group() == old:
-            self.__goto.get_goto()['condition'].set_left(new)
-        if self.__goto is not None \
-            and self.__goto.is_conditional() \
-            and self.__goto.get_goto()['condition'].get_right_prop() == 'var' \
-            and PATTERN_RAW_VAR.match(self.__goto.get_goto()['condition'].get_right()).group() == old:
-            self.__goto.get_goto()['condition'].set_right(new)
-        for b in self.__branch:
-            if PATTERN_RAW_VAR.match(b.get_name()).group() == old:
-                b.set_name(new)
-        for v, vidx in zip(self.__var, range(len(self.__var))):
-            if PATTERN_RAW_VAR.match(v).group() == old:
-                self.__var[vidx] = new
+        self.__var.append(new)
+        find_phi = False
+        i = 0
+        for c, i in zip(self.__content, range(len(self.__content))):
+            if type(c) is Assign and c.get_right()['op'] == 'phi':
+                find_phi = True
+                continue
+            else:
                 break
+        if find_phi:
+            self.__content.insert(i+1, Constrain_Phi(old, new))
+        else:
+            self.__content.insert(i, Constrain_Phi(old, new))
                 
     def __str__(self):
         
@@ -518,8 +549,11 @@ class Block(object):
     def debug(self):
         
         print ("  Block name: " + self.__name)
-        print ("    Variables: ", end="")
+        print ("    Uses: ", end="")
         for v in self.__var:
+            print (v, end=" ")
+        print ("\n    Defines: ", end="")
+        for v in self.__def:
             print (v, end=" ")
         print ()
         for stmt in self.__content:
@@ -532,7 +566,8 @@ class Block(object):
     def get_name(self):     return self.__name
     def get_content(self):  return self.__content
     def get_branch(self):   return self.__branch
-    def get_vars_used(self):     return self.__var
+    def get_vars_used(self):    return self.__var
+    def get_vars_defed(self):   return self.__def
     def get_goto(self):     return self.__goto
                 
 class CFG(object):
@@ -570,7 +605,6 @@ class CFG(object):
                         bb, bidx = self.__find_block(b_name)
                         if bb is not None:
                             tmp_flags = [False for i in self.__block]
-                            tmp_flags[my_bidx] = True
                             self.__replace_var_block_chain(bb, bidx, br.get_name(),
                                                            br.get_true_name(), tmp_flags)
                             break
@@ -579,7 +613,6 @@ class CFG(object):
                             bb, bidx = self.__find_block(b_name)
                             if bb is not None:
                                 tmp_flags = [False for i in self.__block]
-                                tmp_flags[my_bidx] = True
                                 self.__replace_var_block_chain(bb, bidx, br.get_name(),
                                                                br.get_false_name(), tmp_flags)
                                 break
@@ -624,6 +657,17 @@ class CFG(object):
         for b in self.__block:
             b.debug()
         
+    def get_vars_used(self):
+        
+        ret = {}
+        for b in self.__block:
+            ret[b.get_name()] = b.get_vars_used()
+        return ret
+    def get_vars_defed(self):
+        ret = {}
+        for b in self.__block:
+            ret[b.get_name()] = b.get_vars_defed()
+        return ret
     def get_name(self):     return self.__name
     def get_block(self):    return self.__block
     def get_entry(self):    return self.__entry
@@ -631,7 +675,7 @@ class CFG(object):
             
 if __name__ == "__main__":
     
-    path = "../benchmark/t9.ssa"
+    path = "../benchmark/t7.ssa"
     sym_tab = symtab.build_symtab(path)
     with open(path, 'r') as f:
         lines = f.readlines()
@@ -641,3 +685,4 @@ if __name__ == "__main__":
                        key)
     for key in cfg.keys():
         cfg[key].debug()
+        #print(str(cfg[key]))

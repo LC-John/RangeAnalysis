@@ -1,0 +1,75 @@
+
+Constraint graph foo
+Entry: 13 
+Return: 5
+Constraint:
+  VarNode 0
+    Name: k_2	Type: int
+    Next: 10	Prev: 6 
+  VarNode 1
+    Name: k_4	Type: int
+    Next: 10	Prev: 8 
+  VarNode 2
+    Name: k_1	Type: int
+    Next: 5	16	Prev: 10 19 22 25 
+  VarNode 3
+    Name: k_1_bb_4_t	Type: int
+    Next: 25	19	22	Prev: 15 
+  VarNode 4
+    Name: argc_3_bb_4_t	Type: int
+    Next: 26	Prev: 16 
+  VarNode 5
+    Name: _5	Type: int
+    Next: Prev: 2 
+  RangeNode 6
+    Range: [0.0, 0.0]
+    Next: 0	Prev: 
+  ArithmeticNode 8
+    Operation: +
+    Next: 1	Prev: 9 17 
+  RangeNode 9
+    Range: [1.0, 1.0]
+    Next: 8	Prev: 
+  PhiNode 10
+    Next: 2	Prev: 0 1 
+  VarNode 13
+    Name: argc_3	Type: int
+    Next: 15	Prev: 
+  FtRangeNode 15
+    Range-L: -inf
+    Range-R: argc_3 - 1
+    Next: 3	Prev: 13 18 21 24 
+  FtRangeNode 16
+    Range-L: k_1 + 1
+    Range-R: inf
+    Next: 4	Prev: 2 26 
+  VarNode 17
+    Name: k_1_71045	Type: int
+    Next: 8	Prev: 11 
+  VarNode 18
+    Name: k_1_39154	Type: int
+    Next: 15	Prev: 11 
+  VarNode 19
+    Name: k_1_69767	Type: int
+    Next: 2	Prev: 3 
+  VarNode 20
+    Name: k_1_18124	Type: int
+    Next: Prev: 14 
+  VarNode 21
+    Name: k_1_63480	Type: int
+    Next: 15	Prev: 14 
+  VarNode 22
+    Name: k_1_60357	Type: int
+    Next: 2	Prev: 3 
+  VarNode 23
+    Name: k_1_49182	Type: int
+    Next: Prev: 7 
+  VarNode 24
+    Name: k_1_63102	Type: int
+    Next: 15	Prev: 7 
+  VarNode 25
+    Name: k_1_23313	Type: int
+    Next: 2	Prev: 3 
+  VarNode 26
+    Name: argc_3_13495	Type: int
+    Next: 16	Prev: 4 

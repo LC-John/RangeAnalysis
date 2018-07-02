@@ -1,0 +1,163 @@
+
+Constraint graph foo
+Entry: 29 
+Return: 12
+Constraint:
+  VarNode 0
+    Name: i_5	Type: int
+    Next: 21	Prev: 14 
+  VarNode 1
+    Name: j_6	Type: int
+    Next: 22	Prev: 9 
+  VarNode 2
+    Name: i_7	Type: int
+    Next: 21	Prev: 17 
+  VarNode 3
+    Name: j_8	Type: int
+    Next: 22	Prev: 19 
+  VarNode 4
+    Name: i_2	Type: int
+    Next: 34	Prev: 21 
+  VarNode 5
+    Name: j_3	Type: int
+    Next: 33	Prev: 22 
+  VarNode 6
+    Name: i_2_bb_5_t	Type: int
+    Next: 55	57	Prev: 33 
+  VarNode 7
+    Name: j_3_bb_5_t	Type: int
+    Next: 61	59	Prev: 34 
+  VarNode 8
+    Name: k_9	Type: int
+    Next: 28	Prev: 26 
+  VarNode 9
+    Name: k_1	Type: int
+    Next: 1	12	Prev: 28 37 40 41 44 45 48 49 52 53 
+  VarNode 10
+    Name: k_1_bb_7_t	Type: int
+    Next: 48	44	52	40	Prev: 35 
+  VarNode 11
+    Name: k_1_bb_7_f	Type: int
+    Next: 53	Prev: 36 
+  VarNode 12
+    Name: _10	Type: int
+    Next: Prev: 9 
+  RangeNode 14
+    Range: [0.0, 0.0]
+    Next: 0	Prev: 
+  ArithmeticNode 17
+    Operation: +
+    Next: 2	Prev: 18 54 
+  RangeNode 18
+    Range: [1.0, 1.0]
+    Next: 17	Prev: 
+  ArithmeticNode 19
+    Operation: +
+    Next: 3	Prev: 20 58 
+  RangeNode 20
+    Range: [-1.0, -1.0]
+    Next: 19	Prev: 
+  PhiNode 21
+    Next: 4	Prev: 0 2 
+  PhiNode 22
+    Next: 5	Prev: 1 3 
+  ArithmeticNode 26
+    Operation: +
+    Next: 8	Prev: 27 38 
+  RangeNode 27
+    Range: [1.0, 1.0]
+    Next: 26	Prev: 
+  PhiNode 28
+    Next: 9	Prev: 29 8 
+  VarNode 29
+    Name: k_4	Type: int
+    Next: 28	Prev: 
+  FtRangeNode 33
+    Range-L: -inf
+    Range-R: j_3 - 1
+    Next: 6	Prev: 5 55 57 
+  FtRangeNode 34
+    Range-L: i_2 + 1
+    Range-R: inf
+    Next: 7	Prev: 4 59 61 
+  RangeNode 35
+    Range: [-inf, 99.0]
+    Next: 10	Prev: 39 43 47 51 
+  RangeNode 36
+    Range: [100.0, inf]
+    Next: 11	Prev: 39 43 47 51 
+  VarNode 37
+    Name: k_1_49719	Type: int
+    Next: 9	Prev: 32 
+  VarNode 38
+    Name: k_1_96107	Type: int
+    Next: 26	Prev: 32 
+  VarNode 39
+    Name: k_1_42646	Type: int
+    Next: 35	36	Prev: 32 
+  VarNode 40
+    Name: k_1_6240	Type: int
+    Next: 9	Prev: 10 
+  VarNode 41
+    Name: k_1_51483	Type: int
+    Next: 9	Prev: 25 
+  VarNode 42
+    Name: k_1_17371	Type: int
+    Next: Prev: 25 
+  VarNode 43
+    Name: k_1_52226	Type: int
+    Next: 35	36	Prev: 25 
+  VarNode 44
+    Name: k_1_95041	Type: int
+    Next: 9	Prev: 10 
+  VarNode 45
+    Name: k_1_65104	Type: int
+    Next: 9	Prev: 13 
+  VarNode 46
+    Name: k_1_6708	Type: int
+    Next: Prev: 13 
+  VarNode 47
+    Name: k_1_67919	Type: int
+    Next: 35	36	Prev: 13 
+  VarNode 48
+    Name: k_1_28867	Type: int
+    Next: 9	Prev: 10 
+  VarNode 49
+    Name: k_1_9868	Type: int
+    Next: 9	Prev: 30 
+  VarNode 50
+    Name: k_1_39245	Type: int
+    Next: Prev: 30 
+  VarNode 51
+    Name: k_1_62600	Type: int
+    Next: 35	36	Prev: 30 
+  VarNode 52
+    Name: k_1_46569	Type: int
+    Next: 9	Prev: 10 
+  VarNode 53
+    Name: k_1_82166	Type: int
+    Next: 9	Prev: 11 
+  VarNode 54
+    Name: i_2_49983	Type: int
+    Next: 17	Prev: 16 
+  VarNode 55
+    Name: i_2_58361	Type: int
+    Next: 33	Prev: 6 
+  VarNode 56
+    Name: i_2_50520	Type: int
+    Next: Prev: 23 
+  VarNode 57
+    Name: i_2_52543	Type: int
+    Next: 33	Prev: 6 
+  VarNode 58
+    Name: j_3_44859	Type: int
+    Next: 19	Prev: 24 
+  VarNode 59
+    Name: j_3_12459	Type: int
+    Next: 34	Prev: 7 
+  VarNode 60
+    Name: j_3_44416	Type: int
+    Next: Prev: 15 
+  VarNode 61
+    Name: j_3_51613	Type: int
+    Next: 34	Prev: 7 

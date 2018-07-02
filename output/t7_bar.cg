@@ -1,0 +1,49 @@
+
+Constraint graph bar
+Entry: 12 
+Return: 10
+Constraint:
+  VarNode 6
+    Name: i_2_bb_2_t	Type: int
+    Next: 22 	Prev: 20 
+  VarNode 7
+    Name: i_2_bb_2_f	Type: int
+    Next: 21 	Prev: 19 
+  VarNode 8
+    Name: _3	Type: int
+    Next: 18 	Prev: 13 
+  VarNode 9
+    Name: _4	Type: int
+    Next: 18 	Prev: 16 
+  VarNode 10
+    Name: _1	Type: int
+    Next: 	Prev: 18 
+  VarNode 12
+    Name: i_2	Type: int
+    Next: 20 19 	Prev: 
+  ArithmeticNode 13
+    Operation: +
+    Next: 8 	Prev: 14 22 
+  RangeNode 14
+    Range: [10.0, 10.0]
+    Next: 13 	Prev: 
+  ArithmeticNode 16
+    Operation: -
+    Next: 9 	Prev: 17 21 
+  RangeNode 17
+    Range: [5.0, 5.0]
+    Next: 16 	Prev: 
+  PhiNode 18
+    Next: 10 	Prev: 8 9 
+  RangeNode 20
+    Range: [0.0, inf]
+    Next: 6 	Prev: 12 
+  RangeNode 19
+    Range: [-inf, -1.0]
+    Next: 7 	Prev: 12 
+  VarNode 21
+    Name: i_2_3729	Type: int
+    Next: 16 	Prev: 7 
+  VarNode 22
+    Name: i_2_96168	Type: int
+    Next: 13 	Prev: 6 

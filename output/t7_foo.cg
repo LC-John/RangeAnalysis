@@ -1,0 +1,23 @@
+
+Constraint graph foo
+Entry: 4 
+Return: 2
+Constraint:
+  VarNode 0
+    Name: j_4	Type: int
+    Next: 5 	Prev: 3 
+  VarNode 1
+    Name: k_6	Type: int
+    Next: 2 	Prev: 5 
+  VarNode 2
+    Name: _7	Type: int
+    Next: 	Prev: 1 
+  CallNode 3
+    Function: bar
+    Next: 0 	Prev: 4 
+  VarNode 4
+    Name: i_2	Type: int
+    Next: 3 	Prev: 
+  CallNode 5
+    Function: bar
+    Next: 1 	Prev: 0 
