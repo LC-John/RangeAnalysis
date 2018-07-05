@@ -1,317 +1,136 @@
 
-Constraint graph foo
-Entry: 
+Full constraint graph foo
+No entry
 Return: 18
 Constraint:
   VarNode 0
     Name: sum_6	Type: int
-    Next: 47	Prev: 19 
+    Next: 41 	Prev: 19 
   VarNode 1
     Name: i_7	Type: int
-    Next: 48	Prev: 20 
+    Next: 42 	Prev: 20 
   VarNode 2
     Name: j_8	Type: int
-    Next: 37	Prev: 21 
+    Next: 34 	Prev: 21 
   VarNode 3
     Name: j_5_bb_4_t	Type: int
-    Next: 92	104	68	72	Prev: 51 
+    Next: 24 32 	Prev: 43 
   VarNode 4
     Name: j_5_bb_4_f	Type: int
-    Next: 88	100	64	80	Prev: 52 
+    Next: 31 	Prev: 44 
   VarNode 5
     Name: _9	Type: int
-    Next: 29	Prev: 28 
+    Next: 26 	Prev: 25 
   VarNode 6
     Name: sum_10	Type: int
-    Next: 30	Prev: 29 
+    Next: 27 	Prev: 26 
   VarNode 7
     Name: sum_1	Type: int
-    Next: 36	Prev: 30 
+    Next: 33 	Prev: 27 
   VarNode 8
     Name: j_11	Type: int
-    Next: 37	Prev: 31 
+    Next: 34 	Prev: 28 
   VarNode 9
     Name: sum_2	Type: int
-    Next: 29	30	47	Prev: 36 
+    Next: 26 27 41 	Prev: 33 
   VarNode 10
     Name: j_5	Type: int
-    Next: 54	Prev: 37 
+    Next: 22 23 24 25 28 30 31 32 43 44 45 46 	Prev: 22 23 24 30 31 32 34 
   VarNode 11
     Name: j_5_bb_7_t	Type: int
-    Next: 84	96	60	76	Prev: 53 
+    Next: 22 23 30 	Prev: 45 
   VarNode 12
     Name: i_4_bb_7_t	Type: int
-    Next: 116	122	107	Prev: 54 
+    Next: 35 38 	Prev: 46 
   VarNode 13
     Name: i_12	Type: int
-    Next: 48	Prev: 45 
+    Next: 42 	Prev: 39 
   VarNode 14
     Name: sum_3	Type: int
-    Next: 36	18	Prev: 47 
+    Next: 33 18 	Prev: 41 
   VarNode 15
     Name: i_4	Type: int
-    Next: 53	Prev: 48 
+    Next: 35 36 37 38 39 45 46 47 48 	Prev: 35 36 37 38 42 
   VarNode 16
     Name: i_4_bb_9_t	Type: int
-    Next: 113	119	110	Prev: 55 
-  VarNode 17
-    Name: i_4_bb_9_f	Type: int
-    Next: Prev: 56 
+    Next: 36 37 	Prev: 47 
   VarNode 18
     Name: _13	Type: int
-    Next: Prev: 14 
+    Next: 	Prev: 14 
   RangeNode 19
     Range: [-10.0, -10.0]
-    Next: 0	Prev: 
+    Next: 0 	Prev: 
   RangeNode 20
     Range: [0.0, 0.0]
-    Next: 1	Prev: 
+    Next: 1 	Prev: 
   RangeNode 21
     Range: [0.0, 0.0]
-    Next: 2	Prev: 
-  ArithmeticNode 28
+    Next: 2 	Prev: 
+  C_PhiNode 22
+    Next: 10 	Prev: 10 11 
+  C_PhiNode 23
+    Next: 10 	Prev: 10 11 
+  C_PhiNode 24
+    Next: 10 	Prev: 10 3 
+  ArithmeticNode 25
     Operation: *
-    Next: 5	Prev: 58 62 
-  ArithmeticNode 29
+    Next: 5 	Prev: 10 
+  ArithmeticNode 26
     Operation: +
-    Next: 6	Prev: 5 9 
-  PhiNode 30
-    Next: 7	Prev: 9 6 
-  ArithmeticNode 31
+    Next: 6 	Prev: 5 9 
+  PhiNode 27
+    Next: 7 	Prev: 9 6 
+  ArithmeticNode 28
     Operation: +
-    Next: 8	Prev: 32 59 
-  RangeNode 32
+    Next: 8 	Prev: 10 29 
+  RangeNode 29
     Range: [1.0, 1.0]
-    Next: 31	Prev: 
-  PhiNode 36
-    Next: 9	Prev: 14 7 
-  PhiNode 37
-    Next: 10	Prev: 2 8 
-  ArithmeticNode 45
+    Next: 28 	Prev: 
+  C_PhiNode 30
+    Next: 10 	Prev: 10 11 
+  C_PhiNode 31
+    Next: 10 	Prev: 10 4 
+  C_PhiNode 32
+    Next: 10 	Prev: 10 3 
+  PhiNode 33
+    Next: 9 	Prev: 14 7 
+  PhiNode 34
+    Next: 10 	Prev: 2 8 
+  C_PhiNode 35
+    Next: 15 	Prev: 15 12 
+  C_PhiNode 36
+    Next: 15 	Prev: 15 16 
+  C_PhiNode 37
+    Next: 15 	Prev: 15 16 
+  C_PhiNode 38
+    Next: 15 	Prev: 15 12 
+  ArithmeticNode 39
     Operation: +
-    Next: 13	Prev: 46 106 
-  RangeNode 46
+    Next: 13 	Prev: 15 40 
+  RangeNode 40
     Range: [1.0, 1.0]
-    Next: 45	Prev: 
-  PhiNode 47
-    Next: 14	Prev: 0 9 
-  PhiNode 48
-    Next: 15	Prev: 1 13 
-  RangeNode 51
+    Next: 39 	Prev: 
+  PhiNode 41
+    Next: 14 	Prev: 0 9 
+  PhiNode 42
+    Next: 15 	Prev: 1 13 
+  RangeNode 43
     Range: [99.0, 99.0]
-    Next: 3	Prev: 57 61 65 69 73 77 81 85 89 93 97 101 
-  RangeNode 52
+    Next: 3 	Prev: 10 
+  RangeNode 44
     Range: [-inf, inf]
-    Next: 4	Prev: 57 61 65 69 73 77 81 85 89 93 97 101 
-  FtRangeNode 53
+    Next: 4 	Prev: 10 
+  FtRangeNode 45
     Range-L: -inf
     Range-R: i_4
-    Next: 11	Prev: 15 60 64 68 72 76 80 84 88 92 96 100 104 
-  FtRangeNode 54
+    Next: 11 	Prev: 15 10 
+  FtRangeNode 46
     Range-L: j_5
     Range-R: inf
-    Next: 12	Prev: 10 105 108 111 114 117 120 
-  RangeNode 55
+    Next: 12 	Prev: 10 15 
+  RangeNode 47
     Range: [-inf, 99.0]
-    Next: 16	Prev: 107 110 113 116 119 122 
-  RangeNode 56
+    Next: 16 	Prev: 15 
+  RangeNode 48
     Range: [100.0, inf]
-    Next: 17	Prev: 107 110 113 116 119 122 
-  VarNode 57
-    Name: j_5_7286	Type: int
-    Next: 51	52	Prev: 33 
-  VarNode 58
-    Name: j_5_41075	Type: int
-    Next: 28	Prev: 33 
-  VarNode 59
-    Name: j_5_85808	Type: int
-    Next: 31	Prev: 33 
-  VarNode 60
-    Name: j_5_34881	Type: int
-    Next: 53	Prev: 11 
-  VarNode 61
-    Name: j_5_97604	Type: int
-    Next: 51	52	Prev: 34 
-  VarNode 62
-    Name: j_5_18004	Type: int
-    Next: 28	Prev: 34 
-  VarNode 63
-    Name: j_5_16153	Type: int
-    Next: Prev: 34 
-  VarNode 64
-    Name: j_5_47649	Type: int
-    Next: 53	Prev: 4 
-  VarNode 65
-    Name: j_5_76749	Type: int
-    Next: 51	52	Prev: 35 
-  VarNode 66
-    Name: j_5_75027	Type: int
-    Next: Prev: 35 
-  VarNode 67
-    Name: j_5_23722	Type: int
-    Next: Prev: 35 
-  VarNode 68
-    Name: j_5_98205	Type: int
-    Next: 53	Prev: 3 
-  VarNode 69
-    Name: j_5_93051	Type: int
-    Next: 51	52	Prev: 38 
-  VarNode 70
-    Name: j_5_46848	Type: int
-    Next: Prev: 38 
-  VarNode 71
-    Name: j_5_49577	Type: int
-    Next: Prev: 38 
-  VarNode 72
-    Name: j_5_35072	Type: int
-    Next: 53	Prev: 3 
-  VarNode 73
-    Name: j_5_79892	Type: int
-    Next: 51	52	Prev: 41 
-  VarNode 74
-    Name: j_5_70353	Type: int
-    Next: Prev: 41 
-  VarNode 75
-    Name: j_5_9674	Type: int
-    Next: Prev: 41 
-  VarNode 76
-    Name: j_5_82894	Type: int
-    Next: 53	Prev: 11 
-  VarNode 77
-    Name: j_5_55775	Type: int
-    Next: 51	52	Prev: 42 
-  VarNode 78
-    Name: j_5_48604	Type: int
-    Next: Prev: 42 
-  VarNode 79
-    Name: j_5_52639	Type: int
-    Next: Prev: 42 
-  VarNode 80
-    Name: j_5_66144	Type: int
-    Next: 53	Prev: 4 
-  VarNode 81
-    Name: j_5_984	Type: int
-    Next: 51	52	Prev: 22 
-  VarNode 82
-    Name: j_5_51077	Type: int
-    Next: Prev: 22 
-  VarNode 83
-    Name: j_5_52272	Type: int
-    Next: Prev: 22 
-  VarNode 84
-    Name: j_5_51648	Type: int
-    Next: 53	Prev: 11 
-  VarNode 85
-    Name: j_5_72023	Type: int
-    Next: 51	52	Prev: 23 
-  VarNode 86
-    Name: j_5_55931	Type: int
-    Next: Prev: 23 
-  VarNode 87
-    Name: j_5_56832	Type: int
-    Next: Prev: 23 
-  VarNode 88
-    Name: j_5_18346	Type: int
-    Next: 53	Prev: 4 
-  VarNode 89
-    Name: j_5_17042	Type: int
-    Next: 51	52	Prev: 24 
-  VarNode 90
-    Name: j_5_62881	Type: int
-    Next: Prev: 24 
-  VarNode 91
-    Name: j_5_39350	Type: int
-    Next: Prev: 24 
-  VarNode 92
-    Name: j_5_36264	Type: int
-    Next: 53	Prev: 3 
-  VarNode 93
-    Name: j_5_60128	Type: int
-    Next: 51	52	Prev: 25 
-  VarNode 94
-    Name: j_5_75247	Type: int
-    Next: Prev: 25 
-  VarNode 95
-    Name: j_5_4090	Type: int
-    Next: Prev: 25 
-  VarNode 96
-    Name: j_5_19082	Type: int
-    Next: 53	Prev: 11 
-  VarNode 97
-    Name: j_5_76115	Type: int
-    Next: 51	52	Prev: 26 
-  VarNode 98
-    Name: j_5_93262	Type: int
-    Next: Prev: 26 
-  VarNode 99
-    Name: j_5_53963	Type: int
-    Next: Prev: 26 
-  VarNode 100
-    Name: j_5_42255	Type: int
-    Next: 53	Prev: 4 
-  VarNode 101
-    Name: j_5_22498	Type: int
-    Next: 51	52	Prev: 27 
-  VarNode 102
-    Name: j_5_2815	Type: int
-    Next: Prev: 27 
-  VarNode 103
-    Name: j_5_93923	Type: int
-    Next: Prev: 27 
-  VarNode 104
-    Name: j_5_66974	Type: int
-    Next: 53	Prev: 3 
-  VarNode 105
-    Name: i_4_20597	Type: int
-    Next: 54	Prev: 49 
-  VarNode 106
-    Name: i_4_73762	Type: int
-    Next: 45	Prev: 49 
-  VarNode 107
-    Name: i_4_73467	Type: int
-    Next: 55	56	Prev: 12 
-  VarNode 108
-    Name: i_4_25685	Type: int
-    Next: 54	Prev: 50 
-  VarNode 109
-    Name: i_4_54639	Type: int
-    Next: Prev: 50 
-  VarNode 110
-    Name: i_4_96294	Type: int
-    Next: 55	56	Prev: 16 
-  VarNode 111
-    Name: i_4_89410	Type: int
-    Next: 54	Prev: 39 
-  VarNode 112
-    Name: i_4_89272	Type: int
-    Next: Prev: 39 
-  VarNode 113
-    Name: i_4_31411	Type: int
-    Next: 55	56	Prev: 16 
-  VarNode 114
-    Name: i_4_59454	Type: int
-    Next: 54	Prev: 40 
-  VarNode 115
-    Name: i_4_19397	Type: int
-    Next: Prev: 40 
-  VarNode 116
-    Name: i_4_90218	Type: int
-    Next: 55	56	Prev: 12 
-  VarNode 117
-    Name: i_4_64724	Type: int
-    Next: 54	Prev: 43 
-  VarNode 118
-    Name: i_4_96204	Type: int
-    Next: Prev: 43 
-  VarNode 119
-    Name: i_4_94645	Type: int
-    Next: 55	56	Prev: 16 
-  VarNode 120
-    Name: i_4_25413	Type: int
-    Next: 54	Prev: 44 
-  VarNode 121
-    Name: i_4_65228	Type: int
-    Next: Prev: 44 
-  VarNode 122
-    Name: i_4_59223	Type: int
-    Next: 55	56	Prev: 12 
+    Next: 	Prev: 15 

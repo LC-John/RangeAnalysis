@@ -8,6 +8,8 @@ Created on Sat Jun  2 15:24:30 2018
 import re
 import symtab
 
+import os, sys
+
 PATTERN_INT = re.compile(r"((\+|-)?[0-9]+)")
 PATTERN_FP = re.compile(r"((\+|-)?\d+(\.\d*)?((e|E)(\+|-)?\d+))|((\+|-)?\d+\.\d+)")
 PATTERN_VAR = re.compile(r"(([A-Za-z][A-Za-z0-9]*_[A-Za-z0-9]+)|([A-Za-z][A-Za-z0-9]+\.[A-Za-z0-9]+)|_[A-Za-z0-9]*)")
@@ -101,10 +103,10 @@ class Assign(object):
                 self.__source_prop.append("var")
         elif (" + " in tmp_right or " - " in tmp_right
               or " * " in tmp_right or " / " in tmp_right):
-            if "+" in tmp_right: self.__op = "+"
-            elif "-" in tmp_right: self.__op = "-"
-            elif "*" in tmp_right: self.__op = "*"
+            if "*" in tmp_right: self.__op = "*"
             elif "/" in tmp_right: self.__op = "/"
+            elif "+" in tmp_right: self.__op = "+"
+            elif "-" in tmp_right: self.__op = "-"
             else: self.__op = None
             tmp_right = tmp_right.replace('e+', 'e|')
             tmp_right = tmp_right.replace("e-", 'e~')
@@ -515,13 +517,15 @@ class Block(object):
         old = PATTERN_RAW_VAR.match(old).group()
         new = PATTERN_RAW_VAR.match(new).group()
         if old not in self.__var:
-            return
+            return True
         self.__var.append(new)
         find_phi = False
         i = 0
         for c, i in zip(self.__content, range(len(self.__content))):
             if type(c) is Assign and c.get_right()['op'] == 'phi':
                 find_phi = True
+                if PATTERN_VAR.match(c.get_left()).group() == PATTERN_VAR.match(old).group():
+                    return False
                 continue
             else:
                 break
@@ -529,6 +533,7 @@ class Block(object):
             self.__content.insert(i+1, Constrain_Phi(old, new))
         else:
             self.__content.insert(i, Constrain_Phi(old, new))
+        return True
                 
     def __str__(self):
         
@@ -621,8 +626,9 @@ class CFG(object):
         
         if flags[bidx]:
             return
-        bb.replace_var(old, new)
         flags[bidx] = True
+        if not bb.replace_var(old, new):
+            return
         if bb.get_goto() is not None:
             g = bb.get_goto()
             for b_name in bb.get_goto().get_goto()['true']:
@@ -672,10 +678,41 @@ class CFG(object):
     def get_block(self):    return self.__block
     def get_entry(self):    return self.__entry
     def get_return(self):   return self.__return
-            
+           
+def print_help():
+    
+    print ()
+    print ("+-------------------+")
+    print ("|                   |")
+    print ("|     SSA-CFG       |")
+    print ("|         by DrLC   |")
+    print ("|                   |")
+    print ("+-------------------+")
+    print ()
+    print ("Transfer .ssa file to SSA-CFG.")
+    print ()
+    print ("Use this command to run.")
+    print ("  python3 %s [-P|--path SSA_FILE_PATH]" % sys.argv[0])
+    print ()
+    exit(0)
+ 
+def get_op():
+    
+    args = sys.argv
+    if '-h' in args or '--help' in args:
+        print_help()
+    if len(args) == 1:
+        path = '../benchmark/t1.ssa'
+    elif len(args) == 3 and args[1] in ['-P', '--path']:
+        path = args[2]
+    else:
+        print_help()
+    return path
+        
+
 if __name__ == "__main__":
     
-    path = "../benchmark/t7.ssa"
+    path = get_op()
     sym_tab = symtab.build_symtab(path)
     with open(path, 'r') as f:
         lines = f.readlines()
@@ -685,4 +722,3 @@ if __name__ == "__main__":
                        key)
     for key in cfg.keys():
         cfg[key].debug()
-        #print(str(cfg[key]))

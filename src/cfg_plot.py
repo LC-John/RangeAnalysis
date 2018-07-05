@@ -13,6 +13,8 @@ import matplotlib.pyplot as plt
 from cfg import CFG
 from symtab import build_symtab
 
+import os, sys
+
 def plot(G, cfg, node="", pos=[0,0], entry=False):
     
     G.add_node(node.strip("<>"), pos=pos)
@@ -84,11 +86,56 @@ def generate_cfg(cfg, name="", out_dir=""):
             sys.stdout = f
             cfg[key].debug()
         sys.stdout = stdout_save
+  
+def print_help():
+    
+    print ()
+    print ("+-------------------+")
+    print ("|                   |")
+    print ("|     SSA-CFG       |")
+    print ("|         by DrLC   |")
+    print ("|                   |")
+    print ("+-------------------+")
+    print ()
+    print ("Transfer .ssa file to SSA-CFG, and plot it.")
+    print ()
+    print ("Use this command to run.")
+    print ("  python3 %s [-P|--path SSA_FILE_PATH] [-O|--output OUTPUT_DIR]" % sys.argv[0])
+    print ()
+    exit(0)
+ 
+def get_op():
+    
+    args = sys.argv
+    if '-h' in args or '--help' in args:
+        print_help()
+    if len(args) == 1:
+        path = '../benchmark/t1.ssa'
+        out = '../output'
+    elif len(args) == 3:
+        if args[1] in ['-P', '--path']:
+            path = args[2]
+            out = '../output'
+        elif args[1] in ['-O', '--output']:
+            path = '../benchmark/t1.ssa'
+            out = args[2]
+    elif len(args) == 5:
+        path = None
+        out = None
+        for i in [1, 3]:
+            if args[i] in ['-P', '--path']:
+                path = args[i+1]
+            if args[i] in ['-O', '--output']:
+                out = args[i+1]
+        if path is None or out is None:
+            print_help()
+    else:
+        print_help()
+    return path, out
         
 if __name__ == "__main__":
     
-    path = "../benchmark/t1.ssa"
-    out = "../output"
+    path, out = get_op()
     
     _, file = os.path.split(path)
     name, _ = os.path.splitext(file)

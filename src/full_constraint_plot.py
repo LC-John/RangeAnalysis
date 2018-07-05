@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sun Jul  1 14:26:40 2018
+Created on Tue Jul  3 15:25:02 2018
 
 @author: DrLC
 """
@@ -10,7 +10,7 @@ import networkx as nx
 from networkx.drawing.nx_agraph import to_agraph 
 import matplotlib.pyplot as plt
 
-import constraint
+from full_constraint import FCG
 from constraint import CG
 from cfg import CFG
 from symtab import build_symtab
@@ -36,35 +36,33 @@ def plot(G, cg):
 
 def generate_jpg(cg, name="", out_dir=""):
         
-    for key in cfg.keys():
-        G = nx.DiGraph()
-        plot(G, cg[key])          
-        nx.draw(G, with_labels=True, font_size=8, edge_color='y',
-                node_shape='.', node_color=(1,1,1), pos=nx.circular_layout(G))
-        plt.title("CG for Function \"" + key + "\" in \"" + path + "\"")
-        plt.savefig(os.path.join(os.path.relpath(out_dir), name+"_"+key+".png"))
-        plt.show()
+    G = nx.DiGraph()
+    plot(G, cg)          
+    nx.draw(G, with_labels=True, font_size=8, edge_color='y',
+            node_shape='.', node_color=(1,1,1), pos=nx.circular_layout(G))
+    plt.title("Full CG for Function \"" + cg.get_name() + "\" in \"" + path + "\"")
+    plt.savefig(os.path.join(os.path.relpath(out_dir), name+"_"+key+".png"))
+    plt.show()
         
 def generate_cfg(cg, name="", out_dir=""):
     
     stdout_save = sys.stdout
-    for key in cg.keys():
-        with open(os.path.join(os.path.relpath(out_dir), name+"_"+key+".cg"), 'w') as f:
-            sys.stdout = f
-            cg[key].debug()
-        sys.stdout = stdout_save
+    with open(os.path.join(os.path.relpath(out_dir), name+"_"+key+".cg"), 'w') as f:
+        sys.stdout = f
+        cg.debug()
+    sys.stdout = stdout_save
         
 def print_help():
     
     print ()
-    print ("+----------------------------+")
-    print ("|                            |")
-    print ("|      Constraint Graph      |")
-    print ("|          by DrLC           |")
-    print ("|                            |")
-    print ("+----------------------------+")
+    print ("+---------------------------------+")
+    print ("|                                 |")
+    print ("|      Full Constraint Graph      |")
+    print ("|            by DrLC              |")
+    print ("|                                 |")
+    print ("+---------------------------------+")
     print ()
-    print ("Transfer .ssa file to constraint graph, and plot it.")
+    print ("Transfer .ssa file to constraint graph, embed the function calling, and plot it.")
     print ()
     print ("Use this command to run.")
     print ("  python3 %s [-P|--path SSA_FILE_PATH]" % sys.argv[0])
@@ -77,7 +75,7 @@ def get_op():
     if '-h' in args or '--help' in args:
         print_help()
     if len(args) == 1:
-        path = '../benchmark/t2.ssa'
+        path = '../benchmark/t9.ssa'
         out = '../output'
     elif len(args) == 3:
         if args[1] in ['-P', '--path']:
@@ -113,9 +111,7 @@ if __name__ == "__main__":
     for key in sym_tab.keys():
         cfg[key] = CFG(lines[sym_tab[key]["lines"][1]:sym_tab[key]["lines"][2]],
                        key)
-    cg = {}
-    for key in cfg.keys():
-        cg[key] = CG(cfg[key], sym_tab[key], key)
+    cg = FCG(cfg, "foo", sym_tab)
         
     generate_jpg(cg, name, out)
     generate_cfg(cg, name, out)

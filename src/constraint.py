@@ -12,6 +12,8 @@ import random
 from symtab import build_symtab
 import cfg
 
+import os, sys
+
 PATTERN_VAR = re.compile(r"[A-Za-z_][A-Za-z0-9_.]*")
 
 class ConstraintNode(object):
@@ -24,6 +26,7 @@ class ConstraintNode(object):
         self.__next = []
         self.__number = ConstraintNode.__Number
         ConstraintNode.__Number += 1
+        self.__minmax = None
 
     def debug(self):
         
@@ -41,8 +44,51 @@ class ConstraintNode(object):
             return False
         return self.__number == obj.get_number()
         
-    def add_prev(self, _prev): self.__prev.append(_prev)
-    def add_next(self, _next): self.__next.append(_next)
+    def set_minmax_widen(self, _interval):
+        if self.__minmax is None or len(self.__minmax) < 1:
+            self.__minmax = _interval
+            return True
+        if len(_interval) < 1:
+            return False
+        else:
+            if (_interval[0][0] < self.__minmax[0][0]
+                and _interval[0][1] > self.__minmax[0][1]):
+                self.__minmax = interval((float('-inf'), float('inf')))
+                return True
+            elif _interval[0][0] < self.__minmax[0][0]:
+                self.__minmax = interval((float('-inf'), self.__minmax[0][1]))
+                return True
+            elif _interval[0][1] > self.__minmax[0][1]:
+                self.__minmax = interval((self.__minmax[0][0], float('inf')))
+                return True
+        return False
+    def set_minmax_narrow(self, _interval):
+        if self.__minmax is None or len(self.__minmax) < 1:
+            self.__minmax = _interval
+            return True
+        if len(_interval) < 1:
+            return False
+        else:
+            if (_interval[0][0] > float('-inf') and self.__minmax[0][0] == float('-inf')):
+                self.__minmax = interval((_interval[0][0], self.__minmax[0][1]))
+                return True
+            elif _interval[0][0] < float('inf') and self.__minmax[0][0] == float('inf'):
+                self.__minmax = interval((self.__minmax[0][0], _interval[0][1]))
+                return True
+            elif _interval[0][0] < self.__minmax[0][0]:
+                self.__minmax = interval((_interval[0][0], self.__minmax[0][1]))
+                return True
+            elif _interval[0][1] > self.__minmax[0][1]:
+                self.__minmax = interval((self.__minmax[0][0], _interval[0][1]))
+                return True
+        return False
+    def get_minmax(self):   return self.__minmax
+    def add_prev(self, _prev):
+        if _prev not in self.__prev:
+            self.__prev.append(_prev)
+    def add_next(self, _next):
+        if _next not in self.__next:
+            self.__next.append(_next)
     def del_prev(self, _prev):
         if _prev in self.__prev:
             self.__prev.remove(_prev)
@@ -545,7 +591,25 @@ class CG(object):
                     nxt.add_prev(prv)
                     prv.add_next(nxt)
         for c in tb_del:
-            self.__constraint.remove(c)            
+            self.__constraint.remove(c)
+        all_var = []
+        for c in self.__constraint:
+            if type(c) is not VarNode:
+                continue
+            dup = False
+            for v in all_var:
+                if (c.get_prev() == v.get_prev() \
+                    and c.get_next() == v.get_next()):
+                    dup = True
+                    break
+            if not dup:
+                all_var.append(c)
+        tb_del = []
+        for c in self.__constraint:
+            if type(c) is VarNode and c not in all_var:
+                tb_del.append(c)
+        for c in tb_del:
+            self.__constraint.remove(c)
                     
     def __split_c_phi_by_chain(self, _cfg, block, cphi, old, new=None, begin=False, flag=[]):
         
@@ -568,12 +632,16 @@ class CG(object):
         check_cphi = cphi.get_prev()[0].get_name()
         if check_cphi == old.get_name():
             check_cphi = cphi.get_prev()[1].get_name()
+        check_cphi = check_cphi[:-2]
         check_cphi_cnt = 0
         for i in content_cphi_source:
             if i.startswith(check_cphi):
                 check_cphi_cnt += 1
         if check_cphi_cnt >= 2:
-            print ("merge")
+            ###
+            new.add_next(old)
+            old.add_prev(new)
+            ###
             return
         
         for c in block.get_content():
@@ -599,9 +667,9 @@ class CG(object):
                         if_match = True
                 if if_match:
                     if tmp_op == 'assign':
-                        tmp_var = self.__find_varnode(tmp_source[0])
+                        tmp_var = self.__find_varnode(c.get_left())
                         tmp_var.del_prev(old)
-                        old.del_next(old)
+                        old.del_next(tmp_var)
                         tmp_var.add_prev(new)
                         new.add_next(tmp_var)
                     else:
@@ -614,10 +682,10 @@ class CG(object):
                                 nxt.add_prev(new)
                                 new.add_next(nxt)
                                 break
-        '''
         for br in block.get_branch():
-            if old.get_name() == PATTERN_VAR.match(br.get_name()).group():
+            if PATTERN_VAR.match(br.get_name()).group() == old.get_name():
                 tmp_var = self.__find_varnode(br.get_true_name())
+                assert len(tmp_var.get_prev()) == 1
                 tmp_var = tmp_var.get_prev()[0]
                 tmp_var.del_prev(old)
                 old.del_next(tmp_var)
@@ -625,19 +693,19 @@ class CG(object):
                 new.add_next(tmp_var)
                 if not br.is_ft():
                     tmp_var = self.__find_varnode(br.get_false_name())
+                    assert len(tmp_var.get_prev()) == 1
                     tmp_var = tmp_var.get_prev()[0]
                     tmp_var.del_prev(old)
                     old.del_next(tmp_var)
                     tmp_var.add_prev(new)
                     new.add_next(tmp_var)
-        '''
         goto = block.get_goto().get_goto()
         for b in _cfg.get_block():
             if b.get_name() == goto['true']:
                 self.__split_c_phi_by_chain(_cfg, b, cphi, old, new, False, flag)
             if b.get_name() == goto['false']:
                 self.__split_c_phi_by_chain(_cfg, b, cphi, old, new, False, flag)
-                
+        
     def __simplify(self):
         
         while self.__backward_simplify_iter():
@@ -716,9 +784,40 @@ class CG(object):
     def get_entry_nodes(self):      return self.__entry
     def get_return_node(self):      return self.__return
         
+def print_help():
+    
+    print ()
+    print ("+----------------------------+")
+    print ("|                            |")
+    print ("|      Constraint Graph      |")
+    print ("|          by DrLC           |")
+    print ("|                            |")
+    print ("+----------------------------+")
+    print ()
+    print ("Transfer .ssa file to constraint graph.")
+    print ()
+    print ("Use this command to run.")
+    print ("  python3 %s [-P|--path SSA_FILE_PATH]" % sys.argv[0])
+    print ()
+    exit(0)
+
+def get_op():
+    
+    args = sys.argv
+    if '-h' in args or '--help' in args:
+        print_help()
+    if len(args) == 1:
+        path = '../benchmark/t9.ssa'
+    elif len(args) == 3 and args[1] in ['-P', '--path']:
+        path = args[2]
+    else:
+        print_help()
+    return path
+
 if __name__ == "__main__":
     
-    path = "../benchmark/t3.ssa"
+    path = get_op()
+    
     sym_tab = build_symtab(path)
     with open(path, 'r') as f:
         lines = f.readlines()
