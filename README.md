@@ -27,23 +27,23 @@ The first step is to parse the SSA files. The SSA files, regarded as raw input i
 We summarize the benchmark SSA files, and give the empirical BNF as follow. The terminal symbols are in the form of regular expression. Strings between quotation marks are just raw strings.
 
 ```
-S 			->	(func_header func_decl func_body)*
-func_header	->	";; Function" name "(" name "=" num ")"" 
-func_decl	-> 	name "(" ((type name) ("," type name)*)? ")"
-func_body	-> 	"{" (type name ";")* block* "}"
-block 		-> 	"<" [A-Za-z 0-9]* ">" phi* (assign | func_call)* (goto | c_goto)?
-phi 		-> 	"#" name "= PHI <" name ("," name)+ ">"
-assign 		-> 	name "=" name ";" | name "=" arith_op ";" | name "=" func_call ";"
-goto 		-> 	"goto <" [A-Za-z 0-9]* ">;"
-c_goto 		-> 	"if (" comp_op ")" goto "else" goto
-func_call 	-> 	name "(" ((name | num) ("," name | "," num)*)? ")"
-arith_op 	-> 	(name | num) ("+" | "-" | "*" | "/") (name | num)
-com_op 		-> 	(name | num) ("<" | ">" | "<=" | ">=" | "==" | "!=") (name | num)
-num			-> 	int | float
-int 		-> 	(\+|-)?[0-9]*
-float 		-> 	(\+|-)?[0-9]+(\.[0-9]*)?((e|E)(\+|-)?[0-9]+))|((\+|-)?[0-9]+\.[0-9]+
-name 		-> 	[_A-Za-z][_.A-Za-z0-9]*(\([0-9]*\))?
-type 		-> 	"int" | "float"
+S           ->  (func_header func_decl func_body)*
+func_header ->  ";; Function" name "(" name "=" num ")"" 
+func_decl   ->  name "(" ((type name) ("," type name)*)? ")"
+func_body   ->  "{" (type name ";")* block* "}"
+block       ->  "<" [A-Za-z 0-9]* ">" phi* (assign | func_call)* (goto | c_goto)?
+phi         ->  "#" name "= PHI <" name ("," name)+ ">"
+assign      ->  name "=" name ";" | name "=" arith_op ";" | name "=" func_call ";"
+goto        ->  "goto <" [A-Za-z 0-9]* ">;"
+c_goto      ->  "if (" comp_op ")" goto "else" goto
+func_call   ->  name "(" ((name | num) ("," name | "," num)*)? ")"
+arith_op    ->  (name | num) ("+" | "-" | "*" | "/") (name | num)
+com_op      ->  (name | num) ("<" | ">" | "<=" | ">=" | "==" | "!=") (name | num)
+num         ->  int | float
+int         ->  (\+|-)?[0-9]*
+float       ->  (\+|-)?[0-9]+(\.[0-9]*)?((e|E)(\+|-)?[0-9]+))|((\+|-)?[0-9]+\.[0-9]+
+name        ->  [_A-Za-z][_.A-Za-z0-9]*(\([0-9]*\))?
+type        ->  "int" | "float"
 ```
 
 We translate the SSA files to CFG defined and implemented by us. The detail of the CFG defination and implementation and the translation process are in [SSA2CFG source code](https://github.com/LC-John/RangeAnalysis/src/cfg.py).
