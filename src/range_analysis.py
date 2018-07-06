@@ -11,7 +11,7 @@ from full_constraint import FCG
 from symtab import build_symtab
 
 from interval import interval
-
+import sys, os
 
 def arithmetic_op(s1, s2, op):
     
@@ -274,9 +274,56 @@ def narrow(cg=None, curr_nodes=[], flag=[], updated=False):
                 assert False
     return narrow(cg, next_nodes, flag, updated)
     
+def print_help():
+    
+    print ()
+    print ("+--------------------------+")
+    print ("|                          |")
+    print ("|      Range Analysis      |")
+    print ("|         by DrLC          |")
+    print ("|                          |")
+    print ("+--------------------------+")
+    print ()
+    print ("Return value range analysis.")
+    print ()
+    print ("Use this command to run.")
+    print ("  python3 %s [-P|--path SSA_FILE_PATH] [-M|--main MAIN_FUNCTION_NAME]" % sys.argv[0])
+    print ()
+    exit(0)
+
+def get_op():
+    
+    args = sys.argv
+    if '-h' in args or '--help' in args:
+        print_help()
+    if len(args) == 1:
+        path = '../benchmark/t2.ssa'
+        main = 'foo'
+    elif len(args) == 3:
+        if args[1] in ['-P', '--path']:
+            path = args[2]
+            main = 'foo'
+        elif args[1] in ['-M', '--main']:
+            main = args[2]
+            path = '../benchmark/t2.ssa'
+        else:
+            print_help()
+    elif len(args) == 5:
+        if args[1] in ['-P', '--path'] and args[3] in ['-M', '--main']:
+            path = args[2]
+            main = args[4]
+        elif args[3] in ['-P', '--path'] and args[1] in ['-M', '--main']:
+            main = args[2]
+            path = args[4]
+        else:
+            print_help()
+    else:
+        print_help()
+    return path, main
+    
 if __name__ == "__main__":
     
-    path = "../benchmark/t10.ssa"
+    path, main_func = get_op()
     sym_tab = build_symtab(path)
     with open(path, 'r') as f:
         lines = f.readlines()
@@ -285,7 +332,8 @@ if __name__ == "__main__":
         _cfg_[key] = cfg.CFG(lines[sym_tab[key]["lines"][1]:sym_tab[key]["lines"][2]],
                              key)
 
-    main_func = 'foo'
+    assert main_func in _cfg_.keys(), ("Function %s not found!" % main_func)
+        
     argument = []
     for i in sym_tab['foo']['decl'].get_args():
         key = i.get_name()
@@ -306,8 +354,12 @@ if __name__ == "__main__":
         flags = [False for i in cg.get_constraint_nodes()]
         updated = narrow(cg, cg.get_entry_nodes(), flags, False)
         
-    for c in cg.get_constraint_nodes():
-        if type(c) is constraint.VarNode:
-            print (c.get_name() + "\t" + str(c.get_minmax()))
-    print ("\n" + cg.get_return_node().get_name() + "\t" \
-           + str(cg.get_return_node().get_minmax()))
+    print ("Return value range >> ", end='')
+    if len(cg.get_return_node().get_minmax()) < 1:
+        print ("NULL")
+    else:
+        print ("[", end='')
+        print (cg.get_return_node().get_minmax()[0][0], end="")
+        print (",", end="")
+        print (cg.get_return_node().get_minmax()[0][1], end="")
+        print ("]")

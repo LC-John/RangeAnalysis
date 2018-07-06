@@ -97,7 +97,7 @@ def get_op():
     else:
         print_help()
     return path, out
-        
+    
 if __name__ == "__main__":
     
     path, out = get_op()
