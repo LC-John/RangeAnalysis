@@ -106,15 +106,89 @@ The detail of the widen-ft-narrow process is in [RA source code](https://github.
 
 ## Demonstrations
 
-![CFG for 'bar' in t7.ssa](https://github.com/LC-John/RangeAnalysis/blob/master/img/t7_cfg_bar.png)
+Original C/C++ source code
 
-![CFG for 'foo' in t7.ssa](https://github.com/LC-John/RangeAnalysis/blob/master/img/t7_cfg_foo.png)
+```C
+/*
+ * file: t2.c
+ * input: k in [200, 300]
+ * output: k in [200, 300]
+ */
+int foo(int k) {
+  while (k < 100) {
+    int i = 0;
+    int j = k;
+    while (i < j) {
+      i = i + 1;
+      j = j - 1;
+    }
+    k = k + 1;
+  }
+  return k;
+}
+```
 
-![CG for 'bar' in t7.ssa](https://github.com/LC-John/RangeAnalysis/blob/master/img/t7_cg_bar.png)
+SSA file
 
-![CG for 'foo' in t7.ssa](https://github.com/LC-John/RangeAnalysis/blob/master/img/t7_cg_foo.png)
+```C
+;; Function foo (foo, funcdef_no=0, decl_uid=1831, cgraph_uid=0, symbol_order=0)
 
-![Full-CG for 'foo' in t7.ssa](https://github.com/LC-John/RangeAnalysis/blob/master/img/t7_cg_full.png)
+foo (int k)
+{
+  int j;
+  int i;
+  int D.1842;
+  int _10;
+
+  <bb 2>:
+  goto <bb 7>;
+
+  <bb 3>:
+  i_5 = 0;
+  j_6 = k_1;
+  goto <bb 5>;
+
+  <bb 4>:
+  i_7 = i_2 + 1;
+  j_8 = j_3 + -1;
+
+  <bb 5>:
+  # i_2 = PHI <i_5(3), i_7(4)>
+  # j_3 = PHI <j_6(3), j_8(4)>
+  if (i_2 < j_3)
+    goto <bb 4>;
+  else
+    goto <bb 6>;
+
+  <bb 6>:
+  k_9 = k_1 + 1;
+
+  <bb 7>:
+  # k_1 = PHI <k_4(D)(2), k_9(6)>
+  if (k_1 <= 99)
+    goto <bb 3>;
+  else
+    goto <bb 8>;
+
+  <bb 8>:
+  _10 = k_1;
+
+<L6>:
+  return _10;
+}
+```
+
+CFG
+
+![CFG for 'foo' in t7.ssa](https://github.com/LC-John/RangeAnalysis/blob/master/img/t2_cfg_foo.png)
+
+CG / Full-CG
+
+![CG for 'bar' in t7.ssa](https://github.com/LC-John/RangeAnalysis/blob/master/img/t2_cg_foo.png)
+
+Range analysis result
+
+![Full-CG for 'foo' in t7.ssa](https://github.com/LC-John/RangeAnalysis/blob/master/img/t2_ra_foo.png)
 
 ## References
 

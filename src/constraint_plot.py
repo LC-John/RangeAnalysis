@@ -77,7 +77,7 @@ def get_op():
     if '-h' in args or '--help' in args:
         print_help()
     if len(args) == 1:
-        path = '../benchmark/t7.ssa'
+        path = '../benchmark/t2.ssa'
         out = '../output'
     elif len(args) == 3:
         if args[1] in ['-P', '--path']:
